@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title>SmartBalance</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+<body>
+ <script src="../assets/js/main.js"></script>
+  <div class="sidebar">
+    <div class="logo-details">
+      <span class="logo_name">[SMR+B1BNC]</span>
+    </div>
+      <ul class="nav-links">
+        <li>
+          <a href="/dashboard">
+            <i class='bx bx-grid-alt' ></i>
+            <span class="links_name">Dashboard</span>
+          </a>
+        </li>
+          <li>
+              <a href="/login" class="active">
+                <i class='bx bx-grid-alt' ></i>
+                <span class="links_name">Login</span>
+              </a>
+          </li>
+          <li>
+              <a href="/coolingSystem">
+                <i class='bx bxs-battery-low' ></i>
+                <span class="links_name">Cooling System</span>
+              </a>
+            </li>
+            <li>
+                <a href="#" class="active">
+                  <i class='bx bx bxs-hot bx-flashing' ></i>
+                  <span class="links_name">Fuel System</span>
+                </a>
+            </li>
+      </ul>
+  </div>
+<section class="home-section">
+  {{ .result }}
+</section>
+
+</body>
+</html>
