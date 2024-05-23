@@ -19,7 +19,7 @@ func (h *Handler) regpage_auth(c *gin.Context){
 
 	if c.Request.Form.Get("password") == c.Request.Form.Get("confirmpassword"){
 		
-		conn, err := grpc.Dial(":50051", grpc.WithInsecure())
+		conn, err := grpc.Dial("172.26.0.4:50051", grpc.WithInsecure())
 		if err != nil {
 			log.Println(err)
 		}	

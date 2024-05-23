@@ -30,7 +30,7 @@ func (h *Handler) collingData(c *gin.Context) {
 			return
 		}
 
-		conn, err := grpc.Dial(":50051", grpc.WithInsecure())
+		conn, err := grpc.Dial("172.26.0.4:50051", grpc.WithInsecure())
 		if err != nil {
 			log.Println(err)
 		}
@@ -57,7 +57,7 @@ func (h *Handler) collingData(c *gin.Context) {
 		id := c.Request.Form.Get("id")
 
 
-		conn, err := grpc.Dial(":50051", grpc.WithInsecure())
+		conn, err := grpc.Dial("172.26.0.4:50051", grpc.WithInsecure())
 		if err != nil {
 			log.Println(err)
 		}
