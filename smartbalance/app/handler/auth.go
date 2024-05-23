@@ -20,7 +20,7 @@ func (h *Handler) loginpage_auth(c *gin.Context) {
 		return
 	}
 
-	conn, err := grpc.Dial(":50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("172.26.0.4:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Println(err)
 	}
