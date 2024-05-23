@@ -60,14 +60,17 @@ func verifyJWT(tokenString string) (string, error){
 		return "", nil
 	}
 
-	log.Println(token.Valid)
+	if token.Valid {
+		claims, ok := token.Claims.(jwt.MapClaims)
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-
-	if !ok {
+		if !ok {
+			return "", nil
+		}
+		return claims["aud"].(string), nil
+	}else {
 		return "", nil
 	}
-	return claims["sub"].(string), nil
+	
 }
 
 
