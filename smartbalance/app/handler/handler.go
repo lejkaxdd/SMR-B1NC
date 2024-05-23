@@ -2,16 +2,12 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	// "github.com/gin-contrib/cors"
 )
 
 type Handler struct {
 	// services *service.Service
 }
 
-// func NewHandler(services *service.Service) *Handler{
-// 	return &Handler{services: services}
-// }
 
 func (h *Handler) InitRoutes() *gin.Engine {
 
@@ -21,12 +17,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	router.Static("/assets", "/application/assets")
 	router.LoadHTMLGlob("/application/templates/*.html")
-
-	// config := cors.DefaultConfig()
-	// config.AllowOrigins = []string{"http://172.26.0.3:8080"}
-	// config.AllowCredentials = true
-	// router.Use(cors.New(config))
-
 
 	auth := router.Group("/login")
 	{
