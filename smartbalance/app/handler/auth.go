@@ -39,7 +39,7 @@ func (h *Handler) loginpage_auth(c *gin.Context) {
 			log.Printf("Failed to generate token for user:%s", c.PostForm("username"))
 		}
 
-		c.SetCookie("Cookie", token, 30 * 60 * 1000, "/", "192.168.150.129", false, true)
+		c.SetCookie("Cookie", token, 30 * 60 * 1000, "/", "0.0.0.0", false, true)
 		c.HTML(http.StatusOK, "index.html", nil)
 	}else {
 		log.Printf("Failed to generate token for user:%s", c.PostForm("username"))
