@@ -26,6 +26,7 @@ services:
     container_name: SmartBalance
     depends_on:
       - pangolin
+      - grpc
     build: ./smartbalance
     command: "go run ./main.go"
     volumes:
@@ -42,7 +43,6 @@ services:
     container_name: grpcServer
     depends_on: 
       - pangolin
-      - smb
     build: ./rpcServer
     command : "go run ./main.go"
     volumes:
