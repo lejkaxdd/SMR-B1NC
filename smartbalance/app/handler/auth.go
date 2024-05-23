@@ -2,8 +2,10 @@ package handler
 
 import (
 	"context"
+	"net"
 	"net/http"
 	"smb/pkg/api"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -38,16 +40,23 @@ func (h *Handler) loginpage_auth(c *gin.Context) {
 		if err != nil{
 			log.Printf("Failed to generate token for user:%s", c.PostForm("username"))
 		}
-
-		c.SetCookie("Cookie", token, 30 * 60 * 1000, "/", "0.0.0.0", false, true)
+		
+		ip := string(GetOutboundIP())
+		c.SetCookie("Cookie", token, 30 * 60 * 1000, "/", ip, false, true)
 		c.HTML(http.StatusOK, "index.html", nil)
 	}else {
 		log.Printf("Failed to generate token for user:%s", c.PostForm("username"))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	// log.Info(res.GetToken())
+}
 
-	// c.SetCookie("Cookie", res.GetToken(), 30*60*60, "/", "192.168.150.129", false, true)
-	// c.HTML(http.StatusOK, "index.html", nil)
+func GetOutboundIP() net.IP {
+    conn, err := net.Dial("udp", "8.8.8.8:80")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer conn.Close()
+    localAddr := conn.LocalAddr().(*net.UDPAddr)
+    return localAddr.IP
 }
