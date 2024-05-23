@@ -42,7 +42,7 @@ func (h *Handler) loginpage_auth(c *gin.Context) {
 		}
 		
 		ip := string(GetOutboundIP())
-		c.SetCookie("Cookie", token, 30 * 60 * 1000, "/", ip, false, true)
+		c.SetCookie("Cookie", token, 3600, "/", ip, false, true)
 		c.HTML(http.StatusOK, "index.html", nil)
 	}else {
 		log.Printf("Failed to generate token for user:%s", c.PostForm("username"))
