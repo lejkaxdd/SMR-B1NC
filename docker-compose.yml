@@ -26,10 +26,10 @@ services:
     container_name: SmartBalance
     depends_on:
       - pangolin
-    build: ./smartBalance
+    build: ./smartbalance
     command: "go run ./main.go"
     volumes:
-      - ./smartBalance:/application
+      - ./smartbalance:/application
     ports:
       - 8080:8080
     networks:
