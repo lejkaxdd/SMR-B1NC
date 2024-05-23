@@ -13,7 +13,7 @@ import (
 
 func generateJWT(username string) (string, error) {
 
-	key, err := os.ReadFile("/application/grpcFunc/cert/private/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
+	key, err := os.ReadFile("/application/gFunctions/cert/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
 
 	log.Println("secret key", key)
 	if err != nil {
@@ -40,7 +40,13 @@ func generateJWT(username string) (string, error) {
 
 func verifyJWT(tokenString string) (string, error){
 
-	key, err := os.ReadFile("/application/grpcFunc/cert/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
+	key, err := os.ReadFile("/application/gFunctions/cert/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
+
+	log.Println("secret key", key)
+	if err != nil {
+		log.Println("create: parse key:", err)
+	}
+
 
 	token, err := jwt.Parse(tokenString, func (token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
