@@ -47,6 +47,17 @@ func (h *Handler) collingData(c *gin.Context) {
 
 		log.Println(res)
 
+		myfile, e := os.OpenFile("./cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
+		if e != nil {
+			log.Printf("Problem with creating file: %s", e)
+		}
+	
+		defer myfile.Close()
+		
+		data_to_file := []byte(res.GetRecord())
+		myfile.Write(data_to_file)
+		fmt.Printf("\nData %s successfully written to file\n", data_to_file)
+
 		c.JSON(http.StatusOK, gin.H{
 			"id": res.GetRecord(),
 		})
@@ -71,19 +82,6 @@ func (h *Handler) collingData(c *gin.Context) {
 		}
 
 		defer conn.Close()
-
-
-		myfile, e := os.OpenFile("./cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
-		if e != nil {
-			log.Printf("Problem with creating file: %s", e)
-		}
-	
-		defer myfile.Close()
-		
-		data_to_file := []byte(res.GetValue())
-		myfile.Write(data_to_file)
-		fmt.Printf("\nData %s successfully written to file\n", data_to_file)
-	
 
 		val := rand.Intn(4) + 1
 		data, err := os.ReadFile(fmt.Sprintf("/application/assets/img/col%s.png", strconv.Itoa(val)))
