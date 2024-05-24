@@ -57,8 +57,8 @@ func (h *Handler) collingData(c *gin.Context) {
 		myfile.Write(data_to_file)
 		fmt.Printf("\nData %s successfully written to file\n", data_to_file)
 
-		c.JSON(http.StatusOK, gin.H{
-			"id": res.GetRecord(),
+		c.HTML(http.StatusOK, "coolingResponse.html", gin.H{
+			"res": res.GetRecord(),
 		})
 
 		// Check
