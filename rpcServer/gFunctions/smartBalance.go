@@ -124,7 +124,7 @@ func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 
 		if scanErr == nil {
 
-			if usercheck == "t"{
+			if usercheck == "true"{
 				log.Printf("trying to add existing user: %s", req.GetInfo().Username)
 				return &api.CreateUserResponse{Confirm: "such a user already exists"}, err
 			}
