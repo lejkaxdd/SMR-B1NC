@@ -73,24 +73,19 @@ func (h *Handler) collingData(c *gin.Context) {
 		defer conn.Close()
 
 
-		// if strings.TrimSpace(id) == "" {
-		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "empty input id"})
-		// 	return
-		// }
-		// stm := fmt.Sprintf(`{Record\s*=\s*(%s)\s*[^}]+}`, id)
-		// re := regexp.MustCompile(stm)
-
-		// myfile, err := os.ReadFile("/application/cooling_audit.txt")
-		// if err != nil {
-		// 	fmt.Print(err)
-		// }
-
-		// str := string(myfile)
-		// match := re.FindString(str)
-		// fmt.Println(match)
+		myfile, e := os.OpenFile("./cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
+		if e != nil {
+			log.Printf("Problem with creating file: %s", e)
+		}
+	
+		defer myfile.Close()
+		
+		data_to_file := []byte(res.GetValue())
+		myfile.Write(data_to_file)
+		fmt.Printf("\nData %s successfully written to file\n", data_to_file)
+	
 
 		val := rand.Intn(4) + 1
-		// file :=
 		data, err := os.ReadFile(fmt.Sprintf("/application/assets/img/col%s.png", strconv.Itoa(val)))
 
 		if err != nil {

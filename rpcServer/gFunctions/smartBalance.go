@@ -6,7 +6,6 @@ import (
 	"grpc_server/handler"
 	"grpc_server/pkg/api"
 	"grpc_server/repository"
-	"os"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
@@ -52,16 +51,6 @@ func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRe
 		}
 	}
 
-	myfile, e := os.OpenFile("./cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
-	if e != nil {
-		log.Printf("Problem with creating file: %s", e)
-	}
-
-	defer myfile.Close()
-	data := []byte(fmt.Sprintf("{Record="+id+"\tCoolingLevel = %s\tCoolingFrequency = %s\tCoolingType= %s}\n", req.GetInfo().Coolinglevel, req.GetInfo().Coolingfrequency, req.GetInfo().Coolingtype))
-	myfile.Write(data)
-	fmt.Printf("\nData %s successfully written to file\n", data)
-
 	return &api.CoolingSystemResponse{Record: id}, nil
 }
 
@@ -93,7 +82,7 @@ func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSys
 		defer stmt.Close()
 		fmt.Println(scanErr)
 
-		data = fmt.Sprintf(`{"Record" : "%s", "CoolingLevel" : "%s", "CoolingFrequency" : "%s", "CoolingType" : "%s"}`, &id, &coolingLevel, &coolingFrequency, &coolingType)
+		data = fmt.Sprintf(`{"Record" : "%s", "CoolingLevel" : "%s", "CoolingFrequency" : "%s", "CoolingType" : "%s"}`, id, coolingLevel, coolingFrequency, coolingType)
 
 		return &api.CoolingSystemGetResponse{Value: data}, nil
 		}
