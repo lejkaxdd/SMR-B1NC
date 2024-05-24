@@ -2,11 +2,13 @@ package smartBalance
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"os"
 	"grpc_server/handler"
-	"grpc_server/repository"
 	"grpc_server/pkg/api"
+	"grpc_server/repository"
+	"os"
+
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
@@ -15,6 +17,12 @@ type GRPCserver struct {
 	api.UnimplementedSmartBalanceServiceServer
 }
 
+type coolingsystem_record struct {
+	id               string
+	coolingLevel     string
+	coolingFrequency string
+	coolingType      string
+}
 
 // Insert info from CoolingSystem
 func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRequest) (*api.CoolingSystemResponse, error) {
@@ -33,7 +41,6 @@ func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRe
 	}
 	defer db.Close()
 
-
 	row, err := db.Query(`CREATE TABLE IF NOT EXISTS coolingsystem( id varchar(70) PRIMARY KEY, CoolingLevel varchar(70) NOT NULL, CoolingFrequency varchar(70) NOT NULL, CoolingType varchar(70) NOT NULL);`)
 	if err != nil {
 		log.Printf("failed to create table: %s", err.Error())
@@ -47,13 +54,12 @@ func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRe
 	if prepErr == nil {
 		_, execErr := stmt.Exec(id, req.GetInfo().Coolinglevel, req.GetInfo().Coolingfrequency, req.GetInfo().Coolingtype)
 		defer stmt.Close()
-		
+
 		if execErr != nil {
 			log.Println("error while inserting values", stmt)
 		}
 	}
 
-	
 	myfile, e := os.OpenFile("/application/cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 	if e != nil {
 		log.Printf("Problem with creating file: %s", e)
@@ -67,9 +73,8 @@ func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRe
 	return &api.CoolingSystemResponse{Record: id}, nil
 }
 
-
 // Check info from CoolingSystem
-func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSystemGetRequest) (*api.CoolingSystemGetResponse, error){
+func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSystemGetRequest) (*api.CoolingSystemGetResponse, error) {
 
 	db, err := repository.NewPangolinDB(repository.Config{
 		Host:     "172.26.0.2",
@@ -85,23 +90,27 @@ func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSys
 	}
 	defer db.Close()
 
-	stmt, prepErr := db.Prepare("SELECT CoolingType FROM coolingsystem WHERE id = $1")
+	stmt, prepErr := db.Prepare("SELECT * FROM coolingsystem WHERE id = $1")
 
-	var value string
+	var v coolingsystem_record
 	if prepErr == nil {
-		
-		scanErr := stmt.QueryRow(req.Record).Scan(&value)
+
+		scanErr := stmt.QueryRow(req.Record).Scan(&v.id, &v.coolingLevel, &v.coolingFrequency, &v.coolingType)
 		defer stmt.Close()
 		fmt.Println(scanErr)
+
+		out, err := json.Marshal(v)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return &api.CoolingSystemGetResponse{Value: string(out)}, nil
 	}
 
-	return &api.CoolingSystemGetResponse{Value: value}, nil
+	return &api.CoolingSystemGetResponse{Value: "failed to get data"}, nil
 }
 
-
-
 // Create User
-func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest) (*api.CreateUserResponse, error){
+func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest) (*api.CreateUserResponse, error) {
 
 	db, err := repository.NewPangolinDB(repository.Config{
 		Host:     "172.26.0.2",
@@ -129,7 +138,7 @@ func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	if prepErr == nil {
 		_, execErr := stmt.Exec(id, req.GetInfo().Username, req.GetInfo().Password)
 		defer stmt.Close()
-		
+
 		if execErr != nil {
 			log.Println("error while inserting values", stmt)
 			return &api.CreateUserResponse{Confirm: "User hasn't created"}, err
@@ -139,8 +148,7 @@ func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	return &api.CreateUserResponse{Confirm: "User has successfully created"}, err
 }
 
-
-func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (*api.CheckUserResponse, error){
+func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (*api.CheckUserResponse, error) {
 
 	db, err := repository.NewPangolinDB(repository.Config{
 		Host:     "172.26.0.2",
@@ -161,14 +169,14 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 	var passwd string
 	var token string
 	if prepErr == nil {
-		
+
 		scanErr := stmt.QueryRow(req.GetInfo().Username).Scan(&passwd)
 		defer stmt.Close()
 
 		if scanErr == nil {
-			
+
 			fmt.Println(passwd)
-			if passwd == req.GetInfo().Password{
+			if passwd == req.GetInfo().Password {
 				token = "1"
 				return &api.CheckUserResponse{Token: token}, nil
 
@@ -181,8 +189,7 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 		}
 
 	}
-	return &api.CheckUserResponse{Token: "Failed to create token"}, nil	
+	return &api.CheckUserResponse{Token: "Failed to create token"}, nil
 }
-	
-// check 	SELECT CoolingType FROM coolingsystem WHERE id='uuid'
 
+// check 	SELECT CoolingType FROM coolingsystem WHERE id='uuid'
