@@ -89,11 +89,11 @@ func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSys
 
 	if prepErr == nil {
 
-		scanErr := stmt.QueryRow(req.Record).Scan(id, coolingLevel, coolingFrequency, coolingType)
+		scanErr := stmt.QueryRow(req.Record).Scan(&id, &coolingLevel, &coolingFrequency, &coolingType)
 		defer stmt.Close()
 		fmt.Println(scanErr)
 
-		data = fmt.Sprintf("Record = %s CoolingLevel = %s CoolingFrequency = %s CoolingType = %s", id, coolingLevel, coolingFrequency, coolingType)
+		data = fmt.Sprintf(`{"Record" : "%s", "CoolingLevel" : "%s", "CoolingFrequency" : "%s", "CoolingType" : "%s"}`, &id, &coolingLevel, &coolingFrequency, &coolingType)
 
 		return &api.CoolingSystemGetResponse{Value: data}, nil
 		}
