@@ -2,13 +2,11 @@ package smartBalance
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"grpc_server/handler"
 	"grpc_server/pkg/api"
 	"grpc_server/repository"
 	"os"
-
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,12 +15,6 @@ type GRPCserver struct {
 	api.UnimplementedSmartBalanceServiceServer
 }
 
-type coolingsystem_record struct {
-	id               string
-	coolingLevel     string
-	coolingFrequency string
-	coolingType      string
-}
 
 // Insert info from CoolingSystem
 func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRequest) (*api.CoolingSystemResponse, error) {
@@ -60,7 +52,7 @@ func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRe
 		}
 	}
 
-	myfile, e := os.OpenFile("/application/cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
+	myfile, e := os.OpenFile("./cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 	if e != nil {
 		log.Printf("Problem with creating file: %s", e)
 	}
@@ -76,6 +68,7 @@ func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRe
 // Check info from CoolingSystem
 func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSystemGetRequest) (*api.CoolingSystemGetResponse, error) {
 
+	var data string
 	db, err := repository.NewPangolinDB(repository.Config{
 		Host:     "172.26.0.2",
 		Port:     "5433",
@@ -92,22 +85,22 @@ func (s *GRPCserver) CoolingSystemCheck(ctx context.Context, req *api.CoolingSys
 
 	stmt, prepErr := db.Prepare("SELECT * FROM coolingsystem WHERE id = $1")
 
-	var v coolingsystem_record
+	var id, coolingLevel, coolingFrequency, coolingType string
+
 	if prepErr == nil {
 
-		scanErr := stmt.QueryRow(req.Record).Scan(&v.id, &v.coolingLevel, &v.coolingFrequency, &v.coolingType)
+		scanErr := stmt.QueryRow(req.Record).Scan(id, coolingLevel, coolingFrequency, coolingType)
 		defer stmt.Close()
 		fmt.Println(scanErr)
 
-		out, err := json.Marshal(v)
-		if err != nil {
-			fmt.Println(err)
-		}
-		return &api.CoolingSystemGetResponse{Value: string(out)}, nil
-	}
+		data = fmt.Sprintf("Record = %s CoolingLevel = %s CoolingFrequency = %s CoolingType = %s", id, coolingLevel, coolingFrequency, coolingType)
 
-	return &api.CoolingSystemGetResponse{Value: "failed to get data"}, nil
+		return &api.CoolingSystemGetResponse{Value: data}, nil
+		}
+
+		return &api.CoolingSystemGetResponse{Value: "failed to get data"}, nil
 }
+	
 
 // Create User
 func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest) (*api.CreateUserResponse, error) {
