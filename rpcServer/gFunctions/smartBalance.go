@@ -16,19 +16,6 @@ type GRPCserver struct {
 }
 
 
-// gRPC funcs
- 
-//  = repository.Config{
-// 	Host:     "172.26.0.2",
-// 	Port:     "5433",
-// 	Username: "postgres",
-// 	DBName:   "smartbalance",
-// 	Password: "secret",
-// 	SSLMode:  "disable",
-// }
-
-
-
 // Insert info from CoolingSystem
 func (s *GRPCserver) CoolingSystem(ctx context.Context, req *api.CoolingSystemRequest) (*api.CoolingSystemResponse, error) {
 
@@ -135,7 +122,6 @@ func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	if err != nil {
 		log.Printf("failed to create table: %s", err.Error())
 	}
-	// fmt.Println(row)
 	defer row.Close()
 
 	stmt, prepErr := db.Prepare("INSERT INTO users (id, Username, Password) VALUES ($1, $2, $3)")
@@ -174,7 +160,6 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 
 	var passwd string
 	var token string
-	// var token boolean
 	if prepErr == nil {
 		
 		scanErr := stmt.QueryRow(req.GetInfo().Username).Scan(&passwd)
@@ -184,13 +169,6 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 			
 			fmt.Println(passwd)
 			if passwd == req.GetInfo().Password{
-				// token, err = generateJWT(req.Info.GetUsername())
-
-				// if err != nil{
-				// 	log.Println(err)
-				// }
-
-				// return &api.CheckUserResponse{Token: token}, nil
 				token = "1"
 				return &api.CheckUserResponse{Token: token}, nil
 
@@ -206,123 +184,5 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 	return &api.CheckUserResponse{Token: "Failed to create token"}, nil	
 }
 	
-
-
-
-
-/*func checkUser(username string, password string) ([]string, error) {
-
-	//DB connect
-	db, err := repository.NewPangolinDB(repository.Config{
-		Host:     "172.26.0.2",
-		Port:     "5433",
-		Username: "postgres",
-		DBName:   "smartbalance",
-		Password: "secret",
-		SSLMode:  "disable",
-	})
-
-	if err != nil {
-		log.Printf("failed to initialize db: %s", err.Error())
-	}
-	defer db.Close()
-
-	// 	// Checking table exist
-	var dbs []string
-	// 	// id := handler.GenerateUUID()
-	// 	row, err := db.Query(`CREATE TABLE IF NOT EXISTS users(
-	// 		"id" varchar(70) PRIMARY KEY,
-	// 		"username" varchar(50) NOT NULL,
-	// 		"password" varchar(50) NOT NULL);`)
-
-	// 	fmt.Println(row.Next(), "    reere    ", err)
-	// 	if err != nil{
-	// 		log.Println(err)
-	// 	}
-	// //
-	// 	defer row.Close()
-
-	// 	// = db.QueryRow(
-	// 	// 	fmt.Sprintf(`INSERT INTO users ("id", "username", "password") VALUES ('%s', '%s', '%s');`), id, username, password)
-	// 	// if err != nil{
-	// 	// 	log.Println(err)
-	// 	// }
-	// 	// defer row.Close()
-
-	// 	rows, err := db.Query(`SELECT * FROM users;`)
-	// 	if err != nil{
-	// 		log.Println(err)
-	// 	}
-
-	// 	defer rows.Close()
-	// 	for rows.Next() {
-	// 		var id string
-	// 		var password string
-	// 		var username string
-	// 		// var city string
-	// 		// var salar string
-	// 		err = rows.Scan(&id, &username, &password)
-	// 		if err != nil{
-	// 			log.Printf("Failed to retrieve row because %s", err)
-	// 		}
-	// 		dbs = append(dbs, username)
-	// 	}
-
-	return dbs, nil
-}
-*/
-
-
-
 // check 	SELECT CoolingType FROM coolingsystem WHERE id='uuid'
 
-
-// func decodeJWT (tokenString string) {
-
-// 	publicKey := `ne-secret`
-
-// 	decodeToken, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-
-//         if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-//             return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-//         }
-
-//         return publicKey,nil
-//     })
-// 	if err != nil {
-// 		fmt.Println("Errrors")
-// 	}
-// 	fmt.Println(decodeToken)
-
-// }
-
-// func generateJWT(username string) (string, error) {
-	
-// 	privKey, err := os.ReadFile("/application/grpcFunc/cert/private/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-
-// 	key, err := jwt.ParseRSAPrivateKeyFromPEM(privKey)
-// 	if err != nil {
-// 		log.Println("create: parse key:", err)
-// 	}
-
-// 	token := jwt.New(jwt.SigningMethodRS256)
-// 	token.Header["kid"] = "7a8e6b16-dec5-4500-873a-937f0d8e0c0a"
-// 	claims := token.Claims.(jwt.MapClaims)
-
-// 	claims["authorized"] = true
-// 	claims["username"] = username
-// 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
-// 	claims["aud"] = "intern"
-
-// 	tokenString, err := token.SignedString(key)
-
-
-// 	if err != nil {
-// 		fmt.Println("Something Went Wrong: %s", err.Error())
-// 		return "", err
-// 	}
-// 	return tokenString, nil
-// }
