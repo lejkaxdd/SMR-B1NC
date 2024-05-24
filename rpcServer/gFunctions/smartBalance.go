@@ -115,7 +115,25 @@ func (s *GRPCserver) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	}
 	defer row.Close()
 
-	stmt, prepErr := db.Prepare("INSERT INTO users (id, Username, Password) VALUES ($1, $2, $3)")
+	stmt, prepErr := db.Prepare("SELECT EXISTS(SELECT 1 FROM users WHERE Username = $1)")
+
+	var usercheck string
+	if prepErr == nil {
+		scanErr := stmt.QueryRow(req.GetInfo().Username).Scan(&usercheck)
+		defer stmt.Close()
+
+		if scanErr == nil {
+
+			if usercheck == "t"{
+				log.Printf("trying to add existing user: %s", req.GetInfo().Username)
+				return &api.CreateUserResponse{Confirm: "such a user already exists"}, err
+			}
+			
+		}
+	}
+
+
+	stmt, prepErr = db.Prepare("INSERT INTO users (id, Username, Password) VALUES ($1, $2, $3)")
 
 	if prepErr == nil {
 		_, execErr := stmt.Exec(id, req.GetInfo().Username, req.GetInfo().Password)
