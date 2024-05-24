@@ -144,11 +144,6 @@
             <li><a href="#">Delivered</a></li>
           </ul>
           <ul class="details" id="cooling">
-            <li class="topic">Graph</li>
-            <canvas id="myBarChart"
-            width="150"
-            height="500">
-            </canvas>
           </ul>
           </div>
           <div class="button">
@@ -162,44 +157,5 @@
     </div>
   </section>
 
-
- <script>
- 
-    // data sample for the chart
-    let data = {
-        labels: ['Cooling System Status'],
-        datasets: [{
-            label: 'Value',
-            data: [30],
-            backgroundColor: 'rgba(70, 192, 255, 0.6)',
-            borderColor: 'rgba(150, 100, 255, 1)',
-            borderWidth: .8
-        }]
-    };
-
-    // Configuration options for the chart
-    let options = {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    };
-
-    // Get the canvas element
-    let ctx = document.getElementById('myBarChart').getContext('2d');
-
-    // Create the bar chart
-    let myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: options
-    });
-</script>
-
 </body>
 </html>
-
-
-<!-- https://icon-sets.iconify.design/bx/ -->
-<!-- box icons -->
