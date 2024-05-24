@@ -1,4 +1,3 @@
-// package smartbalance
 package handler
 
 import (
