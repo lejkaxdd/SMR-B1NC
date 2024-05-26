@@ -88,9 +88,14 @@ func (h *Handler) dashboard(c *gin.Context){
 		c_grpc := api.NewSmartBalanceServiceClient(conn)
 		req := &api.DashboardRequest{Flag: "all"}
 		res, err := c_grpc.Dashboard(context.Background(), req)
-		fmt.Println(res)
-		log.Println(res)
-		c.HTML(http.StatusOK, "admin.html", nil)
+		coolSystArray := res.GetInfo()
+		log.Println(coolSystArray)
+		// for _, val := range coolSystArray {
+
+		// }
+		c.HTML(http.StatusOK, "admin.html", gin.H{
+			"data": coolSystArray,
+		  })
 	}else {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"result": "You don't have permission to look this page",

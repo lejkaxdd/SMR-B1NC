@@ -6,6 +6,7 @@ import (
 	"grpc_server/handler"
 	"grpc_server/pkg/api"
 	"grpc_server/repository"
+
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
@@ -175,7 +176,6 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 
 		if scanErr == nil {
 
-			fmt.Println(passwd)
 			if passwd == req.GetInfo().Password {
 				token = "1"
 				return &api.CheckUserResponse{Token: token}, nil
@@ -227,11 +227,15 @@ func (s *GRPCserver) Dashboard(ctx context.Context, req *api.DashboardRequest) (
 
 	for rows.Next() {
         var val api.CoolingSystem
-        if err := rows.Scan(&val.Coolinglevel, &val.Coolingfrequency, &val.Coolingtype); err != nil {
-            return &api.DashboardResponse{Info: []*api.CoolingSystem{}}, err
+		var id string 
+        if err := rows.Scan(&id, &val.Coolinglevel, &val.Coolingfrequency, &val.Coolingtype); err != nil {
+            return &api.DashboardResponse{Info: data}, err
         }
         data = append(data, &val)
-
 	}
+
+	if err = rows.Err(); err != nil {
+        return &api.DashboardResponse{Info: data}, err
+    }
 	return &api.DashboardResponse{Info: data}, nil
 }
