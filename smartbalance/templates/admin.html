@@ -52,16 +52,17 @@
               <li class="topic">Cooling Type</li>
               {{ range $key, $value := .Data }}
               <li>{{ $value.CoolingLevel }}</li>
-              
+              {{end}}
             </ul>
             <ul class="details">
+              {{ range $key, $value := .Data }}
               <li class="topic">Cooling Frequency</li>
               <li>{{ $value.CoolingFrequency }}</li>
-
+              {{end}}
            </ul>
             <ul class="details">
               <li class="topic">Cooling Level</li>
-
+              {{ range $key, $value := .Data }}
               <li>{{ $value.CoolingType }}</li>
               {{end}}
             </ul>
