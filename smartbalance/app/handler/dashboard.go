@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+	"time"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
@@ -15,17 +17,63 @@ func (h *Handler) dashboard(c *gin.Context){
 
 	if err != nil {
 		cookie = "NotSet"
+		ip := c.Request.Header.Get("Origin")
+		t := time.Now().Format("2006-01-02 15:04:05")
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Get cookie", "user": "%s", "req": "/dashboard","reqdata\": "%s",}`, t, c.PostForm("username"), cookie)
+		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
+		fromhost := fmt.Sprintf("%s", c.ClientIP())
+
+		log.WithFields(log.Fields{
+			"event":    string(event),
+			"agent":    string(agent),
+			"fromhost": string(fromhost),
+		}).Info("Unable to get Cookie")
 		c.HTML(http.StatusOK,"index.html", gin.H{
 			"result": "Unable to get Cookie",
 		  })
 	}
 
+	ip := c.Request.Header.Get("Origin")
+	t := time.Now().Format("2006-01-02 15:04:05")
+	event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Get cookie", "user": "%s", "req": "/dashboard","reqdata\": "%s",}`, t, c.PostForm("username"), cookie)
+	agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
+	fromhost := fmt.Sprintf("%s", c.ClientIP())
+
+	log.WithFields(log.Fields{
+		"event":    string(event),
+		"agent":    string(agent),
+		"fromhost": string(fromhost),
+	}).Info("Success to get Cookie")
+
+	//Verify JWT
 	verify, err := verifyJWT(cookie)
 	if err != nil {
-		log.Println(err)
+		ip := c.Request.Header.Get("Origin")
+		t := time.Now().Format("2006-01-02 15:04:05")
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Verify JWT", "user": "%s", "req": "/dashboard","reqdata\": "%s",}`, t, c.PostForm("username"), cookie)
+		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
+		fromhost := fmt.Sprintf("%s", c.ClientIP())
+
+		log.WithFields(log.Fields{
+			"event":    string(event),
+			"agent":    string(agent),
+			"fromhost": string(fromhost),
+		}).Info("Failed to verify JWT")
 	}
 
-	log.Println("TOKEN SIGN", verify)
+	ip = c.Request.Header.Get("Origin")
+	t = time.Now().Format("2006-01-02 15:04:05")
+	event = fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Verify JWT", "user": "%s", "req": "/dashboard","reqdata\": "%s",}`, t, c.PostForm("username"), cookie)
+	agent = fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
+	fromhost = fmt.Sprintf("%s", c.ClientIP())
+
+	log.WithFields(log.Fields{
+		"event":    string(event),
+		"agent":    string(agent),
+		"fromhost": string(fromhost),
+	}).Info("Success to verify JWT")
+
+	//log.Println("TOKEN SIGN", verify)
 	
 	if verify == "administrator" {
 		c.HTML(http.StatusOK, "admin.html", nil)
