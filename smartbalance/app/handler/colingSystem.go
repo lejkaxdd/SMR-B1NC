@@ -2,14 +2,15 @@ package handler
 
 import (
 	"context"
-	"strconv"
 	"encoding/base64"
 	"fmt"
 	"math/rand"
-	"os"
 	"net/http"
+	"os"
 	"smb/pkg/api"
+	"strconv"
 	"time"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -39,25 +40,33 @@ func (h *Handler) collingData(c *gin.Context) {
 		res, err := c_grpc.CoolingSystem(context.Background(), req)
 
 		if err != nil {
-			t:= time.Now().Format("2006-01-02 15:04:05")
+			ip := c.Request.Header.Get("Origin")
+			fmt.Println(ip)
+			t := time.Now().Format("2006-01-02 15:04:05")
 			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Failed to insert data cooling system", "user": "", "req": "/coolingSystem","reqdata\": "%s,%s,%s",}`, t, c.PostForm("coolLevel"), c.PostForm("coolFreq"), c.PostForm("coolType"))
-			
-			agent  := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, )
-			fromhost := fmt.Sprintf("%s",c.ClientIP())
-			if err != nil {
-				log.Println(err)
-			}
+			agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip[7:])
+			fromhost := fmt.Sprintf("%s", c.ClientIP())
 
 			log.WithFields(log.Fields{
-				"event": string(event),
-				"agent" : string(agent),
-				"fromhost" : string(fromhost),
+				"event":    string(event),
+				"agent":    string(agent),
+				"fromhost": string(fromhost),
 			}).Info("Failed to insert data")
 		}
 
 		defer conn.Close()
 
-		log.Println(res)
+		ip := c.Request.Header.Get("Origin")
+		t := time.Now().Format("2006-01-02 15:04:05")
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Success", "function" : "Insert data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s,%s,%s",}`, t, c.PostForm("coolLevel"), c.PostForm("coolFreq"), c.PostForm("coolType"))
+		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip[7:])
+		fromhost := fmt.Sprintf("%s", c.ClientIP())
+
+		log.WithFields(log.Fields{
+			"event":    string(event),
+			"agent":    string(agent),
+			"fromhost": string(fromhost),
+		}).Info("Sucessfully insert data to coolingSystem")
 
 		myfile, e := os.OpenFile("./cooling_audit.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 		if e != nil {
@@ -68,7 +77,7 @@ func (h *Handler) collingData(c *gin.Context) {
 
 		data_to_file := []byte(res.GetRecord() + ";")
 		myfile.Write(data_to_file)
-		fmt.Printf("\nData %s successfully written to file\n", data_to_file)
+		//fmt.Printf("\nData %s successfully written to file\n", data_to_file)
 
 		c.HTML(http.StatusOK, "coolingResponse.html", gin.H{
 			"res": res.GetRecord(),
@@ -89,10 +98,32 @@ func (h *Handler) collingData(c *gin.Context) {
 		res, err := c_grpc.CoolingSystemCheck(context.Background(), req)
 
 		if err != nil {
-			log.Println(err)
+			ip := c.Request.Header.Get("Origin")
+			t := time.Now().Format("2006-01-02 15:04:05")
+			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Check data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s",}`, t, c.Request.Form.Get("id"))
+			agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip[7:])
+			fromhost := fmt.Sprintf("%s", c.ClientIP())
+
+			log.WithFields(log.Fields{
+				"event":    string(event),
+				"agent":    string(agent),
+				"fromhost": string(fromhost),
+			}).Info("Failed to get data from coolingSystem")
 		}
 
 		defer conn.Close()
+
+		ip := c.Request.Header.Get("Origin")
+		t := time.Now().Format("2006-01-02 15:04:05")
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Check data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s",}`, t, c.Request.Form.Get("id"))
+		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip[7:])
+		fromhost := fmt.Sprintf("%s", c.ClientIP())
+
+		log.WithFields(log.Fields{
+			"event":    string(event),
+			"agent":    string(agent),
+			"fromhost": string(fromhost),
+		}).Info("Successfully get data from coolingSystem")
 
 		val := rand.Intn(4) + 1
 		data, err := os.ReadFile(fmt.Sprintf("/application/assets/img/col%s.png", strconv.Itoa(val)))
