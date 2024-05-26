@@ -12,6 +12,12 @@ import (
 	"google.golang.org/grpc"
 )
 
+type CoolingSystemObject struct {
+	CoolingLevel,
+    CoolingFrequency,
+    CoolingType string 
+}
+
 func (h *Handler) dashboard(c *gin.Context){
 	
 	cookie, err := c.Cookie("Cookie")
@@ -90,11 +96,12 @@ func (h *Handler) dashboard(c *gin.Context){
 		res, err := c_grpc.Dashboard(context.Background(), req)
 		coolSystArray := res.GetInfo()
 		log.Println(coolSystArray)
-		// for _, val := range coolSystArray {
-
-		// }
+		coolSysObject := []CoolingSystemObject{}
+		for _, val := range coolSystArray {
+			coolSysObject = append(coolSysObject, CoolingSystemObject{val.Coolinglevel, val.Coolingfrequency, val.Coolingtype})
+		}
 		c.HTML(http.StatusOK, "admin.html", gin.H{
-			"data": coolSystArray,
+			"Data": coolSysObject,
 		  })
 	}else {
 		c.HTML(http.StatusOK, "index.html", gin.H{
