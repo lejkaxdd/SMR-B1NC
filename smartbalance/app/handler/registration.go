@@ -33,7 +33,7 @@ func (h *Handler) regpage_auth(c *gin.Context){
 		if err != nil{
 			ip := c.Request.Header.Get("Origin")
 			t := time.Now().Format("2006-01-02 15:04:05")
-			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Failed to create user", "user": "%s", "req": "/registration","reqdata\": "%s:%s",}`, t, c.PostForm("username"), c.PostForm("username"), c.PostForm("password"))
+			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Failed to create user", "user": "%s", "req": "/registration","reqdata": "%s:%s",}`, t, c.PostForm("username"), c.PostForm("username"), c.PostForm("password"))
 			agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 			fromhost := fmt.Sprintf("%s", c.ClientIP())
 			log.WithFields(log.Fields{
@@ -45,7 +45,7 @@ func (h *Handler) regpage_auth(c *gin.Context){
 
 		ip := c.Request.Header.Get("Origin")
 		t := time.Now().Format("2006-01-02 15:04:05")
-		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Successfully create user", "user": "%s", "req": "/registration","reqdata\": "%s",}`, t, c.PostForm("username"), c.PostForm("username"))
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Successfully create user", "user": "%s", "req": "/registration","reqdata": "%s",}`, t, c.PostForm("username"), c.PostForm("username"))
 		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 		fromhost := fmt.Sprintf("%s", c.ClientIP())
 		log.WithFields(log.Fields{
