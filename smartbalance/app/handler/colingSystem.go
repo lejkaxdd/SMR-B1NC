@@ -115,7 +115,7 @@ func (h *Handler) collingData(c *gin.Context) {
 
 		ip := c.Request.Header.Get("Origin")
 		t := time.Now().Format("2006-01-02 15:04:05")
-		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Failed", "function" : "Check data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s",}`, t, c.Request.Form.Get("id"))
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Check data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s",}`, t, c.Request.Form.Get("id"))
 		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 		fromhost := fmt.Sprintf("%s", c.ClientIP())
 
