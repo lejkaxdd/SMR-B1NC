@@ -227,7 +227,7 @@ func (s *GRPCserver) Dashboard(ctx context.Context, req *api.DashboardRequest) (
 
 	for rows.Next() {
         var val api.CoolingSystem
-        if err := rows.Scan(val.Coolinglevel, val.Coolingfrequency, val.Coolingtype); err != nil {
+        if err := rows.Scan(&val.Coolinglevel, &val.Coolingfrequency, &val.Coolingtype); err != nil {
             return &api.DashboardResponse{Info: []*api.CoolingSystem{}}, err
         }
         data = append(data, &val)
