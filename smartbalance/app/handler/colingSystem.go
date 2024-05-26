@@ -58,7 +58,7 @@ func (h *Handler) collingData(c *gin.Context) {
 
 		ip := c.Request.Header.Get("Origin")
 		t := time.Now().Format("2006-01-02 15:04:05")
-		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Success", "function" : "Insert data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s,%s,%s",}`, t, c.PostForm("coolLevel"), c.PostForm("coolFreq"), c.PostForm("coolType"))
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Insert data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s,%s,%s",}`, t, c.PostForm("coolLevel"), c.PostForm("coolFreq"), c.PostForm("coolType"))
 		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 		fromhost := fmt.Sprintf("%s", c.ClientIP())
 
@@ -115,7 +115,7 @@ func (h *Handler) collingData(c *gin.Context) {
 
 		ip := c.Request.Header.Get("Origin")
 		t := time.Now().Format("2006-01-02 15:04:05")
-		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Check data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s",}`, t, c.Request.Form.Get("id"))
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Failed", "function" : "Check data coolingSystem", "user": "", "req": "/coolingSystem","reqdata\": "%s",}`, t, c.Request.Form.Get("id"))
 		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 		fromhost := fmt.Sprintf("%s", c.ClientIP())
 
