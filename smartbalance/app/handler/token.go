@@ -14,7 +14,6 @@ func generateJWT(username string) (string, error) {
 
 	key, err := os.ReadFile("/application/cert/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
 
-	log.Println("secret key", key)
 	if err != nil {
 		log.Println("create: parse key:", err)
 	}
@@ -41,7 +40,6 @@ func verifyJWT(tokenString string) (string, error){
 
 	key, err := os.ReadFile("/application/cert/7a8e6b16-dec5-4500-873a-937f0d8e0c0a")
 
-	log.Println("secret key", key)
 	if err != nil {
 		log.Println("create: parse key:", err)
 	}
