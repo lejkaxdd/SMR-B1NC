@@ -45,14 +45,14 @@ func (h *Handler) regpage_auth(c *gin.Context){
 
 		ip := c.Request.Header.Get("Origin")
 		t := time.Now().Format("2006-01-02 15:04:05")
-		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Failed", "function" : "Successfully create user", "user": "%s", "req": "/registration","reqdata\": "%s",}`, t, c.PostForm("username"), c.PostForm("username"))
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "INFO", "result" : "Success", "function" : "Successfully create user", "user": "%s", "req": "/registration","reqdata\": "%s",}`, t, c.PostForm("username"), c.PostForm("username"))
 		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 		fromhost := fmt.Sprintf("%s", c.ClientIP())
 		log.WithFields(log.Fields{
 			"event":    string(event),
 			"agent":    string(agent),
 			"fromhost": string(fromhost),
-		}).Info("Successfully create user")
+		}).Info(res.GetConfirm())
 
 		c.HTML(http.StatusOK, "wellregister.html", gin.H{
 			"confirm": res.GetConfirm(),
