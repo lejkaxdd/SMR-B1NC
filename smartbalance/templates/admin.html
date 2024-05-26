@@ -50,18 +50,21 @@
           <div class="sales-details">
             <ul class="details">
               <li class="topic">Cooling Type</li>
-              <p>{{ range .data }}
-                {{ . }}
-            {{ end }}
-          </p>
+              {{ range $key, $value := .Data }}
+              <li>{{ $value.coolinglevel }}</li>
+              {{end}}
             </ul>
             <ul class="details">
-              <li class="topic">Cooling Level</li>
-              <!-- <p>{{ }}</p> -->
+              <li class="topic">Cooling Frequency</li>
+              {{ range $key, $value := .Data }}
+              <li>{{ $value.coolingfrequency }}</li>
+              {{end}}
            </ul>
             <ul class="details">
-              <li class="topic">Cooling Frequency</li>
-              <!-- <p>{{ }}</p> -->
+              <li class="topic">Cooling Level</li>
+              {{ range $key, $value := .Data }}
+              <li>{{ $value.coolingtype }}</li>
+              {{end}}
             </ul>
           </div>
           <div class="button">
