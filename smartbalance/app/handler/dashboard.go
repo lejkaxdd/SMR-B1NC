@@ -19,7 +19,7 @@ func (h *Handler) dashboard(c *gin.Context){
 		cookie = "NotSet"
 		ip := c.Request.Header.Get("Origin")
 		t := time.Now().Format("2006-01-02 15:04:05")
-		event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Get cookie", "user": "%s", "req": "/dashboard","reqdata\": "%s",}`, t, c.PostForm("username"), cookie)
+		event := fmt.Sprintf(`{"datetime": "%s", "level" : "WARNING", "result" : "Failed", "function" : "Get cookie", "user": "%s", "req": "/dashboard","reqdata\": "%s",}`, t, c.PostForm("username"), cookie)
 		agent := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, ip)
 		fromhost := fmt.Sprintf("%s", c.ClientIP())
 
