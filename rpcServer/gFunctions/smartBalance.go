@@ -226,11 +226,11 @@ func (s *GRPCserver) Dashboard(ctx context.Context, req *api.DashboardRequest) (
 	var data []*api.CoolingSystem
 
 	for rows.Next() {
-        var val *api.CoolingSystem
-        if err := rows.Scan(&val.Coolinglevel, &val.Coolingfrequency, &val.Coolingtype); err != nil {
+        var val api.CoolingSystem
+        if err := rows.Scan(val.Coolinglevel, val.Coolingfrequency, val.Coolingtype); err != nil {
             return &api.DashboardResponse{Info: []*api.CoolingSystem{}}, err
         }
-        data = append(data, val)
+        data = append(data, &val)
 
 	}
 	return &api.DashboardResponse{Info: data}, nil
