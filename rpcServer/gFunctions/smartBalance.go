@@ -192,4 +192,46 @@ func (s *GRPCserver) CheckUser(ctx context.Context, req *api.CheckUserRequest) (
 	return &api.CheckUserResponse{Token: "Failed to create token"}, nil
 }
 
-// check 	SELECT CoolingType FROM coolingsystem WHERE id='uuid'
+func (s *GRPCserver) Dashboard(ctx context.Context, req *api.DashboardRequest) (*api.DashboardResponse, error) {
+
+	db, err := repository.NewPangolinDB(repository.Config{
+		Host:     "172.26.0.2",
+		Port:     "5433",
+		Username: "postgres",
+		DBName:   "smartbalance",
+		Password: "secret",
+		SSLMode:  "disable",
+	})
+
+	if err != nil {
+		log.Printf("failed to initialize db: %s", err.Error())
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM coolingsystem")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()	
+
+
+	// type Record struct {
+	// 	// Id					string
+	// 	CoolingLevel		string
+	// 	CoolingFrequency 	string
+	// 	CoolingType			string
+	// }
+
+	
+	var data []*api.CoolingSystem
+
+	for rows.Next() {
+        var val *api.CoolingSystem
+        if err := rows.Scan(&val.Coolinglevel, &val.Coolingfrequency, &val.Coolingtype); err != nil {
+            return &api.DashboardResponse{Info: []*api.CoolingSystem{}}, err
+        }
+        data = append(data, val)
+
+	}
+	return &api.DashboardResponse{Info: data}, nil
+}

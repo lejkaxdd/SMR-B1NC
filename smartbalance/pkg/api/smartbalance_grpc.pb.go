@@ -21,9 +21,9 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	SmartBalanceService_CheckUser_FullMethodName          = "/smartbalanceApi.SmartBalanceService/CheckUser"
 	SmartBalanceService_CreateUser_FullMethodName         = "/smartbalanceApi.SmartBalanceService/CreateUser"
-	SmartBalanceService_FuelSystem_FullMethodName         = "/smartbalanceApi.SmartBalanceService/FuelSystem"
 	SmartBalanceService_CoolingSystem_FullMethodName      = "/smartbalanceApi.SmartBalanceService/CoolingSystem"
 	SmartBalanceService_CoolingSystemCheck_FullMethodName = "/smartbalanceApi.SmartBalanceService/CoolingSystemCheck"
+	SmartBalanceService_Dashboard_FullMethodName          = "/smartbalanceApi.SmartBalanceService/Dashboard"
 )
 
 // SmartBalanceServiceClient is the client API for SmartBalanceService service.
@@ -32,9 +32,9 @@ const (
 type SmartBalanceServiceClient interface {
 	CheckUser(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
-	FuelSystem(ctx context.Context, in *FuelSystemRequest, opts ...grpc.CallOption) (*FuelSystemResponse, error)
 	CoolingSystem(ctx context.Context, in *CoolingSystemRequest, opts ...grpc.CallOption) (*CoolingSystemResponse, error)
 	CoolingSystemCheck(ctx context.Context, in *CoolingSystemGetRequest, opts ...grpc.CallOption) (*CoolingSystemGetResponse, error)
+	Dashboard(ctx context.Context, in *DashboardRequest, opts ...grpc.CallOption) (*DashboardResponse, error)
 }
 
 type smartBalanceServiceClient struct {
@@ -63,15 +63,6 @@ func (c *smartBalanceServiceClient) CreateUser(ctx context.Context, in *CreateUs
 	return out, nil
 }
 
-func (c *smartBalanceServiceClient) FuelSystem(ctx context.Context, in *FuelSystemRequest, opts ...grpc.CallOption) (*FuelSystemResponse, error) {
-	out := new(FuelSystemResponse)
-	err := c.cc.Invoke(ctx, SmartBalanceService_FuelSystem_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *smartBalanceServiceClient) CoolingSystem(ctx context.Context, in *CoolingSystemRequest, opts ...grpc.CallOption) (*CoolingSystemResponse, error) {
 	out := new(CoolingSystemResponse)
 	err := c.cc.Invoke(ctx, SmartBalanceService_CoolingSystem_FullMethodName, in, out, opts...)
@@ -90,15 +81,24 @@ func (c *smartBalanceServiceClient) CoolingSystemCheck(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *smartBalanceServiceClient) Dashboard(ctx context.Context, in *DashboardRequest, opts ...grpc.CallOption) (*DashboardResponse, error) {
+	out := new(DashboardResponse)
+	err := c.cc.Invoke(ctx, SmartBalanceService_Dashboard_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SmartBalanceServiceServer is the server API for SmartBalanceService service.
 // All implementations must embed UnimplementedSmartBalanceServiceServer
 // for forward compatibility
 type SmartBalanceServiceServer interface {
 	CheckUser(context.Context, *CheckUserRequest) (*CheckUserResponse, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
-	FuelSystem(context.Context, *FuelSystemRequest) (*FuelSystemResponse, error)
 	CoolingSystem(context.Context, *CoolingSystemRequest) (*CoolingSystemResponse, error)
 	CoolingSystemCheck(context.Context, *CoolingSystemGetRequest) (*CoolingSystemGetResponse, error)
+	Dashboard(context.Context, *DashboardRequest) (*DashboardResponse, error)
 	mustEmbedUnimplementedSmartBalanceServiceServer()
 }
 
@@ -112,14 +112,14 @@ func (UnimplementedSmartBalanceServiceServer) CheckUser(context.Context, *CheckU
 func (UnimplementedSmartBalanceServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedSmartBalanceServiceServer) FuelSystem(context.Context, *FuelSystemRequest) (*FuelSystemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FuelSystem not implemented")
-}
 func (UnimplementedSmartBalanceServiceServer) CoolingSystem(context.Context, *CoolingSystemRequest) (*CoolingSystemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CoolingSystem not implemented")
 }
 func (UnimplementedSmartBalanceServiceServer) CoolingSystemCheck(context.Context, *CoolingSystemGetRequest) (*CoolingSystemGetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CoolingSystemCheck not implemented")
+}
+func (UnimplementedSmartBalanceServiceServer) Dashboard(context.Context, *DashboardRequest) (*DashboardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Dashboard not implemented")
 }
 func (UnimplementedSmartBalanceServiceServer) mustEmbedUnimplementedSmartBalanceServiceServer() {}
 
@@ -170,24 +170,6 @@ func _SmartBalanceService_CreateUser_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SmartBalanceService_FuelSystem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuelSystemRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SmartBalanceServiceServer).FuelSystem(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SmartBalanceService_FuelSystem_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SmartBalanceServiceServer).FuelSystem(ctx, req.(*FuelSystemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SmartBalanceService_CoolingSystem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CoolingSystemRequest)
 	if err := dec(in); err != nil {
@@ -224,6 +206,24 @@ func _SmartBalanceService_CoolingSystemCheck_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SmartBalanceService_Dashboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DashboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmartBalanceServiceServer).Dashboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SmartBalanceService_Dashboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmartBalanceServiceServer).Dashboard(ctx, req.(*DashboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SmartBalanceService_ServiceDesc is the grpc.ServiceDesc for SmartBalanceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -240,16 +240,16 @@ var SmartBalanceService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SmartBalanceService_CreateUser_Handler,
 		},
 		{
-			MethodName: "FuelSystem",
-			Handler:    _SmartBalanceService_FuelSystem_Handler,
-		},
-		{
 			MethodName: "CoolingSystem",
 			Handler:    _SmartBalanceService_CoolingSystem_Handler,
 		},
 		{
 			MethodName: "CoolingSystemCheck",
 			Handler:    _SmartBalanceService_CoolingSystemCheck_Handler,
+		},
+		{
+			MethodName: "Dashboard",
+			Handler:    _SmartBalanceService_Dashboard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

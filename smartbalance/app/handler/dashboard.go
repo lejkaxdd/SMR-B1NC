@@ -1,11 +1,14 @@
 package handler
 
 import (
-	"net/http"
-	"time"
+	"context"
 	"fmt"
+	"net/http"
+	"smb/pkg/api"
+	"time"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 )
 
 
@@ -76,6 +79,17 @@ func (h *Handler) dashboard(c *gin.Context){
 	//log.Println("TOKEN SIGN", verify)
 	
 	if verify == "administrator" {
+
+		conn, err := grpc.Dial("172.26.0.4:50051", grpc.WithInsecure())
+		if err != nil {
+			log.Println(err)
+		}
+
+		c_grpc := api.NewSmartBalanceServiceClient(conn)
+		req := &api.DashboardRequest{Flag: "all"}
+		res, err := c_grpc.Dashboard(context.Background(), req)
+		fmt.Println(res)
+		log.Println(res)
 		c.HTML(http.StatusOK, "admin.html", nil)
 	}else {
 		c.HTML(http.StatusOK, "index.html", gin.H{

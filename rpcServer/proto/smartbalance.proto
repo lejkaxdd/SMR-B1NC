@@ -11,26 +11,11 @@ message User {
     string password = 2; 
 }
 
-message FuelSystem {
-    string pressure = 1;
-    string volume = 2;
-    int32 temperature = 3; 
-}
 
 message CoolingSystem {
     string coolinglevel = 1;
     string coolingfrequency = 2;
     string coolingtype = 3; 
-}
-
-
-
-message FuelSystemRequest{
-    FuelSystem info = 1;
-}
-
-message FuelSystemResponse{
-    string record = 1;
 }
 
 
@@ -71,16 +56,23 @@ message CreateUserResponse {
     string confirm = 1;
 }
 
+// Dashboard
+message DashboardRequest {
+    string flag = 1;
+}
+
+message DashboardResponse {
+    repeated CoolingSystem info = 1;
+}
+
 
 service SmartBalanceService{
     
     
     rpc CheckUser(CheckUserRequest) returns (CheckUserResponse);
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-
-    rpc FuelSystem(FuelSystemRequest) returns (FuelSystemResponse);
-
     rpc CoolingSystem(CoolingSystemRequest) returns (CoolingSystemResponse);
     rpc CoolingSystemCheck(CoolingSystemGetRequest) returns (CoolingSystemGetResponse);
+    rpc Dashboard(DashboardRequest) returns (DashboardResponse);
     
 }
