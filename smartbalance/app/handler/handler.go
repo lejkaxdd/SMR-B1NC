@@ -12,8 +12,6 @@ type Handler struct {
 func (h *Handler) InitRoutes() *gin.Engine {
 
 	
-
-
 	router := gin.New()
 	router.Static("/assets", "/application/assets")
 	router.LoadHTMLGlob("/application/templates/*.html")

@@ -11,6 +11,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (
