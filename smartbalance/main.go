@@ -13,7 +13,7 @@ func main(){
 	logPath := "./log/smr.log"
 	logger := &lumberjack.Logger{
         Filename: logPath,
-        MaxSize: 10,
+        MaxSize: 1,
         MaxBackups: 2,
         MaxAge: 10,
         Compress: true,

@@ -40,32 +40,19 @@ func (h *Handler) collingData(c *gin.Context) {
 
 		if err != nil {
 			t:= time.Now().Format("2006-01-02 15:04:05")
-			event, err := fmt.Printf(`{\"datetime\": \"%s\", 
-			\"level\" : \"ERROR\", 
-			\"result\" : \"Failed\",
-			\"function\" : \"Failed to insert data cooling system\",
-			\"user\": \" \",
-			\"req\": \"/coolingSystem\",
-			\"reqdata\": \"%s %s %s\",}`, t, c.PostForm("coolLevel"), c.PostForm("coolFreq"), c.PostForm("coolType"))
-
-			if err != nil {
-				log.Println(err)
-			}
-
-			agent, err := fmt.Printf(`{\"name\" : \"docker\",
-			\"ip\" : \"%s\",
-			\"type\": \"app\"						
-			}`, c.Request.Header.Get("Host"))
-
+			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Failed to insert data cooling system", "user": "", "req": "/coolingSystem","reqdata\": "%s,%s,%s",}`, t, c.PostForm("coolLevel"), c.PostForm("coolFreq"), c.PostForm("coolType"))
+			
+			agent  := fmt.Sprintf(`{"name" : "docker", "ip" : "%s", "type": "app"}`, )
+			fromhost := fmt.Sprintf("%s",c.ClientIP())
 			if err != nil {
 				log.Println(err)
 			}
 
 			log.WithFields(log.Fields{
-				"event": event,
-				"agent" : agent,
-				"fromhost" : `\"any\"`,
-			})
+				"event": string(event),
+				"agent" : string(agent),
+				"fromhost" : string(fromhost),
+			}).Info("Failed to insert data")
 		}
 
 		defer conn.Close()
