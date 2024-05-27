@@ -48,7 +48,7 @@ func verifyJWT(tokenString string) (string, error){
 	token, err := jwt.Parse(tokenString, func (token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			t := time.Now().Format("2006-01-02 15:04:05")
-			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Failed to parse JWT sign method", "user": "", "req": "/dashboard","reqdata": "%s",}`, t, tokenString)
+			event := fmt.Sprintf(`{"datetime": "%s", "level" : "ERROR", "result" : "Failed", "function" : "Failed to parse JWT sign method", "user": "", "req": "/dashboard","reqdata": "%s"}`, t, tokenString)
 			agent := fmt.Sprintf(`{"name" : "docker", "ip" : "", "type": "app"}`)
 			log.WithFields(log.Fields{
 				"event":    string(event),
